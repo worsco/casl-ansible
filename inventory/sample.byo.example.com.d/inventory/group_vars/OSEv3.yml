@@ -1,54 +1,112 @@
 ---
-
+## DEFAULTS
 deployment_type: openshift-enterprise
 openshift_deployment_type: openshift-enterprise
 openshift_master_cluster_method: native
 openshift_release: v3.11
+openshift_hosted_prometheus_deploy: false
+openshift_cfme_install_app: false
+openshift_hosted_router_selector: 'node-role.kubernetes.io/infra=true'
+openshift_router_selector: 'node-role.kubernetes.io/infra=true'
+openshift_registry_selector: 'node-role.kubernetes.io/infra=true'
+openshift_hosted_manage_router: true
+osm_default_node_selector: 'node-role.kubernetes.io/compute=true'
+openshift_docker_options: "--log-driver=json-file --log-opt max-size=50m --log-opt max-file=100"
+openshift_install_examples: true
+openshift_image_tag: v3.11.98
+openshift_pkg_version: -3.10.98
+system_images_registry: "registry.harbor.CHANGEME.tld"
+hosting_infrastructure: "byo"
+openshift_http_proxy: "http://CHANGEME.DOMAIN.TLD:3128"
+openshift_https_proxy: "http://CHANGEME.DOMAIN.TLD:3128"
 
-# openshift_master_cluster_public_hostname must be something like:
-#   <prefix>.{{ env_id }}.{{ dns_domain }}
-openshift_master_cluster_public_hostname: console.{{ env_id }}.{{ dns_domain }}
+## END DEFAULTS
 
-# openshift_master_cluster_hostname must be something like:
-#   <prefix>.{{ env_id }}.{{ dns_domain }}
-openshift_master_cluster_hostname: api.{{ env_id }}.{{ dns_domain }}
-
-# openshift_master_default_subdomain must be something like:
-#   <prefix>.{{ env_id }}.{{ dns_domain }}
-openshift_master_default_subdomain: apps.{{ env_id }}.{{ dns_domain }}
-
-
+## USERS
 # HTPASSWD Identity Provider
 openshift_master_identity_providers:
- - 'name': 'htpasswd_auth'
+ - 'name': 'Local Authentication'
    'login': 'true'
    'challenge': 'true'
    'kind': 'HTPasswdPasswordIdentityProvider'
+openshift_master_htpasswd_file: '/etc/origin/master/htpasswd'
 
-#this will create an admin/admin user
+# this will create an admin/admin user
 openshift_master_htpasswd_users:
-  admin: $apr1$7aiANAYb$TOUYVUqnBqBlD5AQEIMYw1
+  admin: $apr1$7-THIS-NEEDS-TO-BE-CHANGED
+## END USERS
 
-openshift_hosted_router_selector: 'node-role.kubernetes.io/infra=true'
-openshift_hosted_manage_router: true
-
-osm_default_node_selector: 'node-role.kubernetes.io/compute=true'
-
-openshift_docker_options: "--log-driver=json-file --log-opt max-size=50m --log-opt max-file=100"
-
+## NETWORKING
 os_sdn_network_plugin_name: 'redhat/openshift-ovs-networkpolicy'
-#os_sdn_network_plugin_name: 'redhat/openshift-ovs-multitenant'
 os_firewall_use_firewalld: true
-osm_cluster_network_cidr: 10.1.0.0/16
+osm_cluster_network_cidr: 1.0.0.0/14 
+openshift_portal_net: 2.0.0.0/16
 
-# Registry URL & Credentials
-# For more info: https://access.redhat.com/terms-based-registry/
-oreg_url: 'registry.redhat.io/openshift3/ose-${component}:${version}'
-#oreg_auth_user: "{{ lookup('env', 'OREG_AUTH_USER' )}}"
-#oreg_auth_password: "{{ lookup('env', 'OREG_AUTH_PASSWORD' )}}"
+# URLS
+# CHANGEME
+openshift_master_cluster_public_hostname: "{{ env_id }}-public.{{ dns_domain }}"
+openshift_master_cluster_hostname: "{{ env_id }}-api.{{ dns_domain }}"
+openshift_master_default_subdomain: "{{ env_id}}.{{ dns_domain }}"
+# END URLS
 
-openshift_hosted_prometheus_deploy: false
-openshift_cfme_install_app: false
+openshift_master_console_port: 443
+openshift_master_api_port: 443
+## END NETWORKING
+
+## METRICS
+openshift_metrics_install_metrics: false
+openshift_metrics_cassandra_storage_type: dynamic 
+openshift_metrics_cassandra_pvc_storage_class_name: azure-standard
+## END METRICS
+
+## LOGGING
+openshift_logging_install_logging: false
+openshift_logging_es_pvc_dynamic: false
+openshift_logging_es_pvc_storage_class_name: azure-standard
+## END LOGGING
+
+## REGISTRY
+openshift_hosted_registry_selector: "node-role.kubernetes.io/infra=true"
+#openshift_hosted_registry_storage_kind: dynamic
+#openshift_hosted_registry_storage_volume_size: 1000Gi
+# Azure Registry Configuration
+#openshift_hosted_registry_replicas=1 
+#openshift_hosted_registry_storage_kind=object
+#openshift_hosted_registry_storage_azure_blob_accountkey=<account_key> 
+#openshift_hosted_registry_storage_provider=azure_blob
+#openshift_hosted_registry_storage_azure_blob_accountname=<account_name> 
+#openshift_hosted_registry_storage_azure_blob_container=<registry> 
+#openshift_hosted_registry_storage_azure_blob_realm=core.windows.net
+## END REGISTRY
+
+## GLUSTERFS_IMAGES
+openshift_storage_glusterfs_image: "CHANGEME.DOMAIN.TLD/rhgs3/rhgs-server-rhel7:v3.11"
+openshift_storage_glusterfs_block_image: "CHANGEME.DOMAIN.TLD/rhgs3/rhgs-gluster-block-prov-rhel7:v3.11"
+openshift_storage_glusterfs_heketi_image: "CHANGEME.DOMAIN.TLD/rhgs3/rhgs-volmanager-rhel7:v3.11"
+## END GLUSTERFS_IMAGES 
+
+## OCS_APPS
+openshift_storage_glusterfs_storageclass: false
+openshift_storage_glusterfs_storageclass_default: false
+openshift_storage_glusterfs_block_deploy: false
+openshift_storage_glusterfs_block_host_vol_create: false
+openshift_storage_glusterfs_block_host_vol_size: 980
+openshift_storage_glusterfs_block_storageclass: false
+openshift_storage_glusterfs_block_storageclass_default: false
+openshift_storage_glusterfs_is_native: false
+openshift_storage_glusterfs_heketi_is_native: false
+openshift_storageclass_default: false
+## END OCS_APPS
+
+## OCS_INFRA
+openshift_storage_glusterfs_registry_storageclass: false
+openshift_storage_glusterfs_registry_storageclass_default: false
+openshift_storage_glusterfs_registry_block_deploy: false
+openshift_storage_glusterfs_registry_block_host_vol_create: false
+openshift_storage_glusterfs_registry_block_host_vol_size: 980
+openshift_storage_glusterfs_registry_block_storageclass: false
+openshift_storage_glusterfs_registry_block_storageclass_default: false
+## OCS_INFRA
 
 # Open required ports on IPTables for Prometheus Node Exporters & Router Statistics
 openshift_node_open_ports:
@@ -78,6 +136,14 @@ openshift_node_groups:
 - name: node-config-compute
   labels:
   - 'node-role.kubernetes.io/compute=true'
+  edits:
+  - key: kubeletArguments.kube-reserved
+    value: [ 'cpu={{ ansible_processor_vcpus * 50 }}m', 'memory={{ ansible_processor_vcpus * 50 }}M' ]
+  - key: kubeletArguments.system-reserved
+    value: [ 'cpu={{ ansible_processor_vcpus * 50 }}m', 'memory={{ ansible_processor_vcpus * 100 }}M' ]
+- name: node-config-gluster
+  labels:
+  - 'node-role.kubernetes.io/gluster=true'
   edits:
   - key: kubeletArguments.kube-reserved
     value: [ 'cpu={{ ansible_processor_vcpus * 50 }}m', 'memory={{ ansible_processor_vcpus * 50 }}M' ]

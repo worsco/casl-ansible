@@ -1,15 +1,12 @@
 ---
-
 # Cluster Environment ID to uniquely identify the environment
-env_id: c1-ocp
+env_id: blv-c01
 
-ansible_user: <your ssh key user>
-ansible_become: true
+ansible_user: root
 
-dns_domain: "myorg.com"
+dns_domain: "CHANGME.tld"
 
-# docker_storage_block_device: "/dev/vdb"
-# docker_storage_mount_point: "/var/lib/containers/docker"
+docker_storage_block_device: "/dev/sdc"
 
 # Subscription Management Details
 rhsm_register: True
@@ -17,19 +14,11 @@ rhsm_repos:
  - "rhel-7-server-rpms"
  - "rhel-7-server-ose-3.11-rpms"
  - "rhel-7-server-extras-rpms"
- - "rhel-7-server-ansible-2.6-rpms"
+# - "rhel-7-fast-datapath-rpms"
 
-
-# Use RHSM username, password and optionally pool:
-rhsm_username: "{{ lookup('env', 'RHSM_USER' )}}"
-rhsm_password: "{{ lookup('env', 'RHSM_PASSWD' )}}"
-# leave commented out if you want to `--auto-attach` a pool
-rhsm_pool: "{{ lookup('env', 'RHSM_POOL' )}}"
-
-# Uncomment this and comment out the above to use Red Hat Satellite:
-#rhsm_server_hostname: 'sat-6.example.com'
-#rhsm_org_id: 'CASL_ORG'
-#rhsm_activationkey: 'casl-latest'
+rhsm_server_hostname: 'CHANGME.tld'
+rhsm_org_id: 'CHANGME'
+rhsm_activationkey: 'Openshift Key - CHANGEME'
 
 # Specify the version of docker to use
-#docker_version: "1.12.*"
+docker_version: "1.13.1"

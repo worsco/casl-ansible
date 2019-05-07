@@ -1,5 +1,4 @@
 ---
-
 openshift_node_group_name: 'node-config-infra'
 
 openshift_node_open_ports:
@@ -7,4 +6,4 @@ openshift_node_open_ports:
   port: "1936/tcp"
 - service: "prometheus node exporter"
   port: "9100/tcp"    
-
+...
